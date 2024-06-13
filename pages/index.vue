@@ -58,7 +58,7 @@
         </template>
 
         <div style="height: 100%;">
-            <l-map ref="map" v-model:zoom="zoom" :center="[52.45, 13.41]">
+            <l-map ref="map" v-model:zoom="zoom" v-model:center="center">
                 <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
                     name="OpenStreetMap"></l-tile-layer>
 
@@ -89,18 +89,12 @@ const route = useRoute()
 
 // const a = ref()
 
-const a = computed({
-    get() { return parseQuery(route.query.a) },
-    set({ lat, lng }) { router.replace({ query: { ...route.query, a: `{lat:${lat},lng:${lng}}` } }) }
-})
+const a = queryBackedProp('a', parseQuery, mapToQuery)
+const b = queryBackedProp('b', parseQuery, mapToQuery)
+const date = queryBackedProp('date', (num) => !!num ? new Date(parseInt(num)) : new Date(), (date) => date.getTime())
 
-const b = computed({
-    get() { return parseQuery(route.query.b) },
-    set({ lat, lng }) { router.replace({ query: { ...route.query, b: `{lat:${lat},lng:${lng}}` } }) }
-})
-
-const zoom = ref(10)
-const date = ref(new Date())
+const zoom = queryBackedProp('zoom', (num) => !!num ? parseInt(num) : 10)
+const center = ref(a.value)
 const distance = ref(10000)
 const showRange = ref(true)
 const showToday = ref(true)
@@ -142,5 +136,23 @@ function parseQuery(q) {
         }
     }
     return { lat: 52.5209554, lng: 13.4094429 }
+}
+
+function mapToQuery({ lat, lng }) {
+    return `{lat:${lat},lng:${lng}}`
+}
+function queryBackedProp(param, parser = (x) => x, mapper = (x) => x) {
+    return computed({
+        get() {
+            console.log(`Parsed ${param}`, parser(route.query[param]));
+            return parser(route.query[param])
+        },
+        set(value) {
+            const query = { ...route.query }
+            query[param] = mapper(value)
+            router.replace({ query })
+        }
+    })
+
 }
 </script>
