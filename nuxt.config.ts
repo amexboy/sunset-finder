@@ -6,9 +6,7 @@ export default defineNuxtConfig({
   devServer: {
     port:3003
   },
-  alias: {
-    'geolib2': 'geolib/lib/index.js'
-  },
+
   build: {
     transpile: ['vuetify'],
   },
