@@ -1,0 +1,29 @@
+{
+  "name": "suntracker",
+  "version": "1.0.0",
+  "description": "Finds you the best location to see the sun set",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "geolib": "3.3.1",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
+    "nuxt": "^3.11.2",
+    "suncalc": "^1.9.0",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "leaflet": "^1.9.4",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vuetify": "^3.6.9"
+  }
+}
