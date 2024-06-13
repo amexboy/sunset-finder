@@ -38,7 +38,7 @@
                 </v-list-group>
                 <v-expansion-panels>
                     <v-expansion-panel>
-                        <v-expansion-panel-title v-slot="{ expanded }">
+                        <v-expansion-panel-title>
                             Range Helper
                         </v-expansion-panel-title>
                         <v-expansion-panel-text>
