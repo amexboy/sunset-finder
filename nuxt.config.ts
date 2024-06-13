@@ -6,7 +6,9 @@ export default defineNuxtConfig({
   devServer: {
     port:3003
   },
-
+  app:{
+    // buildAssetsDir: 'assets'
+  },
   build: {
     transpile: ['vuetify'],
   },
