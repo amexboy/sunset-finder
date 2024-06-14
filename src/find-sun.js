@@ -1,6 +1,7 @@
 import SunCalc from 'suncalc'
 import pkg from '../node_modules/geolib/lib/index.js';
 const { computeDestinationPoint, getRhumbLineBearing } = pkg;
+// import { computeDestinationPoint, getRhumbLineBearing } from 'geolib';
 
 export const findSun = (lat, long, date) => {
 

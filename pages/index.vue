@@ -1,60 +1,70 @@
 <template>
     <NuxtLayout>
-        <template #side-bar>
-            <v-divider />
-            <v-list density="compact" nav>
-                <v-menu :close-on-content-click="false" persistent>
-                    <template v-slot:activator="{ props }">
-                        <v-list-item prepend-icon="mdi-calendar" v-bind="props" title="Choose Date"
-                            value="account"></v-list-item>
-                    </template>
+        <template #header>
+            <v-menu :close-on-content-click="false" persistent>
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" text="Choose Date" prepend-icon="mdi-calendar" variant="text"></v-btn>
+                </template>
 
-                    <v-date-picker v-model="date" show-adjacent-months elevation="24"></v-date-picker>
-                </v-menu>
-            </v-list>
+                <v-date-picker v-model="date" show-adjacent-months elevation="24"></v-date-picker>
+            </v-menu>
 
-            <v-list>
-                <v-list-item prepend-icon="mdi-bookmark" title="Bookmark Current Locations" />
-                <v-divider />
-                <v-list-item>
-                    <v-col>
-                    </v-col>
-                </v-list-item>
-                <v-divider />
+            <v-btn prepend-icon="mdi-pin" text="Home" color="green"
+                to="/?a={lat:52.5209554,lng:13.4094429}&b={lat:52.5209554,lng:13.4094429}"></v-btn>
 
-                <v-list-group value="Admin">
-                    <template v-slot:activator="{ props }">
-                        <v-list-item v-bind="props" title="Distance Finding Helper"></v-list-item>
-                    </template>
+            <v-menu :close-on-content-click="false" persistent>
+                <template v-slot:activator="{ props }">
+                    <v-btn v-bind="props" text="Configurations" prepend-icon="mdi-wrench" variant="text"></v-btn>
+                </template>
 
-                    <v-list-item>
-                        <v-text-field variant="solo" density="compact" label="Object Height"></v-text-field>
-                    </v-list-item>
-                    <v-list-item>
-                        <v-text-field variant="solo" density="compact" label="View Spot Height"></v-text-field>
-                    </v-list-item>
+                <v-card class="mx-auto" max-width="344">
+
+                    <v-card-title>
+                        Configurations
+                    </v-card-title>
 
 
-                </v-list-group>
-                <v-expansion-panels>
-                    <v-expansion-panel>
-                        <v-expansion-panel-title>
-                            Range Helper
-                        </v-expansion-panel-title>
-                        <v-expansion-panel-text>
-                            <v-row no-gutters>
+                    <v-divider />
+
+                    <v-card-text>
+                        <v-list>
+                            <!-- <v-list-item prepend-icon="mdi-bookmark" title="Bookmark Current Locations" />
+                            <v-divider />
+
+                            <v-list-group>
+                                <template v-slot:activator="{ props }">
+                                    <v-list-item v-bind="props" title="Distance Finding Helper"></v-list-item>
+                                </template>
+
+                                <v-list>
+
+                                    <v-text-field variant="underlined" density="compact" label="Object Height"></v-text-field>
+                                    <v-text-field variant="underlined" density="compact"
+                                        label="View Spot Height"></v-text-field>
+
+                                </v-list>
+                            </v-list-group> -->
+
+                            <v-list-group :value="true">
+                                <template v-slot:activator="{ props }">
+                                    <v-list-item v-bind="props" title="Range Highlighting"></v-list-item>
+                                </template>
 
                                 <v-switch v-model="showRange" label="All year Range (green triangle)"></v-switch>
-                            </v-row>
-                            <v-row>
-                                <v-text-field v-model="distance" density="compact" variant="solo"
+
+                                <v-text-field v-model="distance" density="compact" variant="underlined"
                                     label="Distance from target in meters" type="number"
                                     append-inner-icon="mid-distance" />
-                            </v-row>
-                        </v-expansion-panel-text>
-                    </v-expansion-panel>
-                </v-expansion-panels>
-            </v-list>
+
+
+
+                            </v-list-group>
+                        </v-list>
+                    </v-card-text>
+                </v-card>
+
+            </v-menu>
+
         </template>
 
         <div style="height: 100%;">
@@ -87,7 +97,6 @@ import { LMap, LTileLayer, LPolygon, LMarker, LPopup } from "@vue-leaflet/vue-le
 const router = useRouter()
 const route = useRoute()
 
-// const a = ref()
 
 const a = queryBackedProp('a', parseQuery, mapToQuery)
 const b = queryBackedProp('b', parseQuery, mapToQuery)
