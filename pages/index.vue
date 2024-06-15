@@ -1,6 +1,38 @@
 <template>
     <NuxtLayout>
         <template #header>
+
+            <v-menu :close-on-content-click="false" persistent location="bottom">
+                <template v-slot:activator="{ props }">
+                    <v-fab class="ms-4" v-bind="props" icon="mdi-help" location="bottom start" size="small" absolute
+                        offset></v-fab>
+                </template>
+
+                <v-card max-height="400px">
+                    <v-card-text>
+                        Move the two markers to chose a line.
+                        Marker A has a triangle that shows you which area can align some time in the year.
+
+                        You can for example use it to find out a place where the sun sets behind an object.
+                        You should put marker A on the target object.
+
+                        When you move object B, you will then get date an time where these two points will align with
+                        where the sun
+                        sets.
+
+                        <v-divider />
+
+                        <div style="overflow: scroll;">
+                            <v-timeline align="start" side="end" size="x-small">
+                                <v-timeline-item v-for="alignment in alignments" :key="alignment">
+                                    {{ alignment }}
+                                </v-timeline-item>
+                            </v-timeline>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            </v-menu>
+
             <v-menu :close-on-content-click="false" persistent>
                 <template v-slot:activator="{ props }">
                     <v-btn v-bind="props" text="Choose Date" prepend-icon="mdi-calendar" variant="text"></v-btn>
@@ -56,8 +88,6 @@
                                     label="Distance from target in meters" type="number"
                                     append-inner-icon="mid-distance" />
 
-
-
                             </v-list-group>
                         </v-list>
                     </v-card-text>
@@ -68,20 +98,23 @@
         </template>
 
         <div style="height: 100%;">
-            <l-map ref="map" v-model:zoom="zoom" v-model:center="center">
+            <l-map ref="map" v-model:zoom="zoom" v-model:center="center" :use-global-leaflet="false">
                 <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base"
                     name="OpenStreetMap"></l-tile-layer>
 
                 <l-polygon v-if="showRange" :lat-lngs="triangle" color="#41b782" />
                 <l-polygon v-if="showToday" :lat-lngs="sunsetBox" color="blue" :weight="1" fill-color="red" />
                 <l-marker v-if="showRange || findTime" :lat-lng="[a.lat, a.lng]" draggable @move="e => a = e.latlng">
-                    <l-popup>Marker A</l-popup>
+                    <l-popup>Marker A : ({{ a.lat }}, {{ a.lng }}) > <v-btn :href="googleMaps(a)">Check On Google
+                            Maps</v-btn>
+                    </l-popup>
                 </l-marker>
                 <template v-if="findTime">
                     <l-marker :lat-lng="[b.lat, b.lng]" draggable @move="e => b = e.latlng">
-                        <l-popup>Marker B:
-                            {{ message }}
-                        </l-popup>
+                        <l-popup>Marker B: ({{ b.lat }}, {{ b.lng }}) >
+                            <v-btn prepend-icon="mdi-map" target="_blank" :href="googleMaps(b)" variant="text">Check On
+                                Google
+                                Maps</v-btn> </l-popup>
                     </l-marker>
                 </template>
             </l-map>
@@ -97,7 +130,6 @@ import { LMap, LTileLayer, LPolygon, LMarker, LPopup } from "@vue-leaflet/vue-le
 const router = useRouter()
 const route = useRoute()
 
-
 const a = queryBackedProp('a', parseQuery, mapToQuery)
 const b = queryBackedProp('b', parseQuery, mapToQuery)
 const date = queryBackedProp('date', (num) => !!num ? new Date(parseInt(num)) : new Date(), (date) => date.getTime())
@@ -112,29 +144,14 @@ const sunsetBox = computed(() => sunsetTriangle(a.value, date.value, distance.va
 const triangle = computed(() => boundingBox(a.value, distance.value))
 const findTime = ref(true)
 
-const defaultMessage = `Move the A and Markers to chose a line.
-            Has a triangle that shows you which area can align some time in the year.
-            
-            You can for example use it to find out a place where the sun sets behind an object.
-            You should put marker A on the target object. 
+const defaultMessage = `        `
 
-            When you move object B, you will then get date an time where these two points will align with where the sun sets. 
-        `
 
-const message = computed(() => {
-    if (a.value.lat === b.value.lat
-        && a.value.lng === b.value.lng) {
-        return defaultMessage
-    }
+const alignments = computed(() => findAlignmentTime(a.value, b.value))
 
-    const times = findAlignmentTime(a.value, b.value)
-    console.log("Checkout the location at Marker B during", times)
-    return `Standing On Marker B, you will see the sun set behind Marker A on these dates:
-   
-    ${times.join("\n\n")}
-    `
-
-})
+function googleMaps(loc) {
+    return `https://www.google.com/maps?q=${loc.lat},${loc.lng}&hl=es;z=${zoom.value}`
+}
 
 function parseQuery(q) {
     if (!!q) {

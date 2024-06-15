@@ -15,10 +15,12 @@ export const findSun = (lat, long, date) => {
 
   return {
     start: {
+      time: times.sunsetStart,
       azimuth: sunsetStartPos.azimuth * 180 / Math.PI,
       altitude: sunsetStartPos.altitude * 180 / Math.PI
     },
     end: {
+      time: times.sunset,
       azimuth: sunsetPos.azimuth * 180 / Math.PI,
       altitude: sunsetPos.altitude * 180 / Math.PI
     }
@@ -102,19 +104,17 @@ export const findAlignmentTime = (a, b) => {
     { latitude: b.lat, longitude: b.lng }
   )
 
-  console.log("Angle between markers", angle)
-  const maxDivergence = 0.5
 
   const res = []
-  for (let date = new Date(), i = 0; i < 365; date.setDate(date.getDate() + 1), i++) {
+  for (let date = new Date(), i = 0; i < 366; date.setDate(date.getDate() + 1), i++) {
 
-    const times = SunCalc.getTimes(date, a.lat, a.lng)
-    const sunsetPos = SunCalc.getPosition(times.sunsetStart, a.lat, a.lng)
+    const angles = findSun(b.lat, b.lng, date)
 
-    const sunsetAngle = sunsetPos.azimuth * 180 / Math.PI
+    console.log("angle: ", angle, "vs", angles)
 
-    if (Math.abs(sunsetAngle - angle) < maxDivergence) {
-      res.push(times.sunsetStart)
+    if ((angles.start.azimuth >= angle >= angles.end.azimuth)
+      || (angles.start.azimuth <= angle <= angles.end.azimuth)) {
+      res.push(angles.start.time)
     }
 
   }
