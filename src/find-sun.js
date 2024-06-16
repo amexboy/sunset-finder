@@ -112,8 +112,8 @@ export const findAlignmentTime = (a, b) => {
 
     console.log("angle: ", angle, "vs", angles)
 
-    if ((angles.start.azimuth >= angle >= angles.end.azimuth)
-      || (angles.start.azimuth <= angle <= angles.end.azimuth)) {
+    if ((angles.start.azimuth >= angle && angle >= angles.end.azimuth)
+      || (angles.start.azimuth <= angle && angle <= angles.end.azimuth)) {
       res.push(angles.start.time)
     }
 
